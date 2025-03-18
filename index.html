@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Support Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/openai@4.0.0/dist/index.min.js"></script>
+</head>
+<body class="light-mode">
+    <div class="background">
+        <div class="blur-circle circle1"></div>
+        <div class="blur-circle circle2"></div>
+        <div class="blur-circle circle3"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="glass-card">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>Student Hub</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#chatbot">AI Assistant</a></li>
+                <li><a href="#sgpa">SGPA Calculator</a></li>
+                <li><a href="#todo">Todo List</a></li>
+            </ul>
+        </nav>
+        <button
+          class="theme-toggle"
+          id="theme-toggle-btn"
+          type="button"
+          title="Toggle theme"
+          aria-label="Toggle theme"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            class="theme-toggle__inner-moon"
+            viewBox="0 0 32 32"
+          >
+            <path d="M27.5 11.5v-7h-7L16 0l-4.5 4.5h-7v7L0 16l4.5 4.5v7h7L16 32l4.5-4.5h7v-7L32 16l-4.5-4.5zM16 25.4a9.39 9.39 0 1 1 0-18.8 9.39 9.39 0 1 1 0 18.8z" />
+            <circle cx="16" cy="16" r="8.1" />
+          </svg>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="glass-card hero-content">
+            <h1 class="animate-text">Smart Academic Helper</h1>
+            <div class="quote-container glass-card scroller">
+                <div class="animate-scroll" style="--animation-duration: 40s;">
+                    <div id="quoteDisplay" class="quote-text"></div>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <a href="#chatbot" class="btn primary">Ask AI Assistant</a>
+                <a href="#sgpa" class="btn secondary">Calculate SGPA</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <!-- AI Chatbot Section -->
+        <section id="chatbot" class="section">
+            <div class="section-header">
+                <h2>BrainBuddy Bot</h2>
+                <p>Your 24/7 study companion. Ask any academic question!</p>
+            </div>
+            <div class="glass-card chatbot-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        <div class="avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hello! I'm your AI study assistant. How can I help you today?</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Ask me anything...">
+                    <button id="send-btn" class="btn primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <div class="voice-input">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SGPA Calculator Section -->
+        <section id="sgpa" class="section">
+            <div class="section-header">
+                <h2>SGPA Calculator</h2>
+                <p>Calculate your semester grade point average easily</p>
+            </div>
+            <div class="glass-card sgpa-container">
+                <div class="sgpa-form">
+                    <div class="form-group">
+                        <label for="num-subjects">Number of Subjects</label>
+                        <input type="number" id="num-subjects" min="1" max="10" value="5">
+                        <button id="generate-fields" class="btn secondary">Generate</button>
+                    </div>
+                    <div id="subject-fields"></div>
+                    <button id="calculate-sgpa" class="btn primary">Calculate SGPA</button>
+                </div>
+                <div class="sgpa-result" id="sgpa-result">
+                    <h3>Your SGPA</h3>
+                    <div class="result-display">0.00</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Todo List Section -->
+        <section id="todo" class="section">
+            <div class="section-header">
+                <h2>Todo List</h2>
+                <p>Keep track of your assignments and deadlines</p>
+            </div>
+            <div class="glass-card todo-container">
+                <div class="todo-header">
+                    <input type="text" id="todo-input" placeholder="Add a new task...">
+                    <button id="add-todo" class="btn primary">Add</button>
+                </div>
+                <div class="todo-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                <ul class="todo-list" id="todo-list"></ul>
+                <div class="todo-stats">
+                    <span id="tasks-left">0 tasks left</span>
+                    <button id="clear-completed" class="btn secondary">Clear Completed</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Feedback Section -->
+    <section id="feedback" class="section">
+        <div class="section-header">
+            <h2>Your Feedback</h2>
+            <p>Help us improve by sharing your experience</p>
+        </div>
+        <div class="glass-card feedback-container">
+            <div class="rating-container">
+                <h3>Rate your experience</h3>
+                <div class="star-rating">
+                    <i class="far fa-star" data-rating="1"></i>
+                    <i class="far fa-star" data-rating="2"></i>
+                    <i class="far fa-star" data-rating="3"></i>
+                    <i class="far fa-star" data-rating="4"></i>
+                    <i class="far fa-star" data-rating="5"></i>
+                </div>
+            </div>
+            <div class="feedback-form">
+                <textarea id="feedback-text" placeholder="Share your thoughts with us..."></textarea>
+                <button id="submit-feedback" class="btn primary">Submit Feedback</button>
+            </div>
+        </div>
+
+        <!-- Feedback Success Modal -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="feedback-modal glass-card" id="feedback-modal">
+            <h3>Thank You!</h3>
+            <p>Your feedback has been submitted successfully. We appreciate your time and input!</p>
+            <button class="btn primary" onclick="closeModal()">Close</button>
+        </div>
+    </section>
+
+    <script>
+        // Star Rating Functionality
+        const starRating = document.querySelector('.star-rating');
+        const stars = starRating.querySelectorAll('i');
+        let selectedRating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                selectedRating = rating;
+                updateStars();
+            });
+
+            star.addEventListener('mouseover', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                highlightStars(rating);
+            });
+
+            star.addEventListener('mouseout', () => {
+                highlightStars(selectedRating);
+            });
+        });
+
+        function updateStars() {
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas', 'active');
+                } else {
+                    star.classList.remove('fas', 'active');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        function highlightStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        // Form Submission and Modal
+        const feedbackForm = document.querySelector('.feedback-form');
+        const feedbackText = document.getElementById('feedback-text');
+        const modal = document.getElementById('feedback-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+
+        document.getElementById('submit-feedback').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            if (!feedbackText.value.trim()) {
+                alert('Please share your thoughts with us');
+                return;
+            }
+
+            // Show success modal with confetti
+            showModal();
+            createConfetti();
+
+            // Reset form
+            selectedRating = 0;
+            updateStars();
+            feedbackText.value = '';
+        });
+
+        function showModal() {
+            modal.classList.add('show');
+            modalOverlay.classList.add('show');
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            modalOverlay.classList.remove('show');
+        }
+
+        function createConfetti() {
+            const colors = ['#6366f1', '#10b981', '#3b82f6', '#ec4899'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+    </script>
+
+    <!-- Footer Section -->
+    <footer class="glass-card">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Student Hub</h3>
+                <p>Your 24/7 academic companion designed to help you succeed in your studies.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#chatbot">AI Assistant</a></li>
+                    <li><a href="#sgpa">SGPA Calculator</a></li>
+                    <li><a href="#todo">Todo List</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                
+                    <a href="https://github.com/Priyanshu-Gupta-9165"><i class="fab fa-github"></i></a>
+        
+                    <a href="https://www.linkedin.com/in/priyanshu-gupta-tech/"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Student Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="sgpa.js"></script>
+    <script src="todo.js"></script>
+    <script src="quotes.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</body>
+</html>
