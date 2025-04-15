@@ -1,133 +1,105 @@
-# Student Support Hub 🎓
+<!-- PROJECT BANNER -->
+<p align="center">
+  <img src="https://img.shields.io/badge/Student-Support%20Hub-6366f1?style=for-the-badge" alt="Student Support Hub"/>
+</p>
 
-<div align="center">
-
-![Student Support Hub](https://img.shields.io/badge/Student-Support%20Hub-6366f1)
-![Version](https://img.shields.io/badge/Version-1.0-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-blue)
-![Status](https://img.shields.io/badge/Status-Active-success)
-![PRs](https://img.shields.io/badge/PRs-Welcome-ff69b4)
-
-</div>
+<h1 align="center">Student Support Hub 🎓</h1>
 
 <p align="center">
   <b>Your All-in-One Academic Companion</b><br>
-  A modern, feature-rich web application designed to help students manage their academic life efficiently.<br>
-  Built with 💖 for students, by students.
+  <i>A modern, feature-rich web application to help you manage your academic life with ease and style.</i><br>
+  <img src="https://img.shields.io/badge/Version-1.0-brightgreen?style=flat-square"/>
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Status-Active-success?style=flat-square"/>
+  <img src="https://img.shields.io/badge/PRs-Welcome-ff69b4?style=flat-square"/>
 </p>
 
-## ✨ Key Features
+---
 
-<table>
-  <tr>
-    <td>
-      <h3>🤖 BrainBuddy AI Assistant</h3>
-      <ul>
-        <li>24/7 AI-powered study companion</li>
-        <li>Natural language processing</li>
-        <li>Voice input support</li>
-        <li>Powered by OpenRouter AI API</li>
-      </ul>
-    </td>
-    <td>
-      <h3>📊 SGPA Calculator</h3>
-      <ul>
-        <li>Instant grade calculation</li>
-        <li>Multiple grading systems</li>
-        <li>Customizable credits</li>
-        <li>Visual result display</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h3>✅ Smart Todo List</h3>
-      <ul>
-        <li>Task management</li>
-        <li>Priority settings</li>
-        <li>Progress tracking</li>
-        <li>Local storage sync</li>
-      </ul>
-    </td>
-    <td>
-      <h3>💬 Interactive Feedback</h3>
-      <ul>
-        <li>Star rating system</li>
-        <li>Detailed feedback forms</li>
-        <li>Animated responses</li>
-        <li>User experience tracking</li>
-      </ul>
-    </td>
-  </tr>
-</table>
+## 🚀 Overview
+Student Support Hub is your trusted digital companion, designed by students for students. Organize, calculate, and collaborate—all in one beautiful, privacy-focused platform.
+
+---
+
+## ✨ Features at a Glance
+
+| 🤖 BrainBuddy AI Assistant | 📊 SGPA Calculator | ✅ Smart Todo List | 💬 Interactive Feedback |
+|--------------------------|--------------------|-------------------|------------------------|
+| 24/7 AI-powered study help<br>Natural language chat<br>Voice input<br>OpenRouter AI API | Instant grade calculation<br>Multiple grading systems<br>Customizable credits<br>Visual results | Task management<br>Priority & progress tracking<br>Local storage sync | Star ratings<br>Detailed feedback forms<br>Animated responses<br>User experience tracking |
+
+---
 
 ## 🎯 Why Choose Student Support Hub?
 
-- **All-in-One Solution**: Combines essential student tools in a single platform
-- **Modern Interface**: Clean, intuitive design with dark/light mode support
-- **Offline Support**: Most features work without internet connection
-- **Privacy Focused**: Your data stays on your device
-- **Regular Updates**: Continuous improvements and new features
+- **All-in-One Solution:** Essential student tools, unified
+- **Modern Interface:** Sleek, intuitive, dark/light mode
+- **Offline Support:** Most features work without internet
+- **Privacy First:** Your data stays on your device
+- **Continuous Updates:** Always improving
 
-## 🛠️ Built With
+---
 
-<div align="center">
+## 🛠️ Tech Stack
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+<p align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white"/>
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
+</p>
 
-</div>
+- 🎨 **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+- 🎭 **UI/UX:** Custom glass-morphism design
+- 🔤 **Icons:** Font Awesome 6
+- 📝 **Typography:** Poppins (Google Fonts)
+- 🤖 **AI:** OpenRouter AI API
+- 💾 **Storage:** Local Storage API
+- ✨ **Animations:** CSS3
 
-- 🎨 **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- 🎭 **UI/UX**: Custom glass-morphism design
-- 🔤 **Icons**: Font Awesome 6
-- 📝 **Typography**: Poppins (Google Fonts)
-- 🤖 **AI Integration**: OpenRouter AI API
-- 💾 **Storage**: Local Storage API
-- ✨ **Animations**: CSS3 Animations & Transitions
+---
 
-## 🚀 Getting Started
+## ⚡ Quick Start
 
-### Prerequisites
+> **Clone & Launch in Seconds!**
 
-- 🌐 Modern web browser (Chrome, Firefox, Safari, Edge)
-- 🔌 Internet connection (for AI features)
+```bash
+git clone https://github.com/Priyanshu-Gupta-9165/Smart-Academic-Helper.git
+cd Smart-Academic-Helper
+python -m http.server
+```
 
-### Quick Start
+---
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/yourusername/student-support-hub.git
-   ```
+## 🔑 Setting Up AI Features
 
-2. **Navigate to Project**
-   ```bash
-   cd student-support-hub
-   ```
+> **Get Your OpenRouter API Key:**
+>
+> 1. Visit [OpenRouter.ai](https://openrouter.ai/)
+> 2. Sign up or log in
+> 3. Go to your dashboard → API section
+> 4. Generate and copy your API key
+> 5. **Never share your API key publicly!**
+> 6. Open `config.json` and paste your key:
+>
+>    ```json
+>    {
+>      "api": {
+>        "key": "YOUR_API_KEY_HERE",
+>        "timeout": 30000,
+>        "model": "your-ai-model"
+>      },
+>      "ui": {
+>        "theme": "auto",
+>        "animations": true
+>      }
+>    }
+>    ```
+> 7. Save and you’re ready!
 
-3. **Launch Application**
-   ```bash
-   # Using Python's built-in server
-   python -m http.server
-   ```
-
-4. **Configure AI Features**
-   - Update `config.json` with your OpenRouter API key
-   - Customize other settings as needed
-
-## 📱 Cross-Platform Support
-
-| Platform | Support |
-|----------|----------|
-| 💻 Desktop | Full support |
-| 💻 Laptop | Full support |
-| 📱 Tablet | Optimized layout |
-| 📱 Mobile | Responsive design |
+---
 
 ## ⚙️ Configuration
 
-Customize the application through `config.json`:
+Customize via `config.json`:
 
 ```json
 {
@@ -142,30 +114,45 @@ Customize the application through `config.json`:
 }
 ```
 
+---
+
+## 📱 Cross-Platform Support
+
+| Platform   | Support           |
+|------------|-------------------|
+| 💻 Desktop | Full              |
+| 💻 Laptop  | Full              |
+| 📱 Tablet  | Optimized layout  |
+| 📱 Mobile  | Responsive design |
+
+---
+
 ## 🤝 Contributing
 
-Contributions are what make the open-source community amazing! Any contributions you make are **greatly appreciated**.
+We love contributions! 🚀
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit (`git commit -m 'Add AmazingFeature'`)
+4. Push (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+MIT License. See `LICENSE` for details.
 
-## 📞 Support
+---
 
-Having trouble? Got suggestions? We'd love to help!
+## 📞 Support & Community
 
 - 📧 Email: support@studentsupporthub.com
-- 🌟 Create an issue
+- 🌟 [Create an issue](https://github.com/Priyanshu-Gupta-9165/Smart-Academic-Helper/issues)
 - 💬 Join our community
 
 ---
 
-<div align="center">
-Made with ❤️ for students worldwide
-</div>
+<p align="center">
+  <i>Made with ❤️ for students worldwide</i>
+</p>
