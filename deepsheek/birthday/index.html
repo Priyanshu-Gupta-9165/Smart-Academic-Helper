@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 19th Birthday Soumya! 🎂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pacifico', cursive;
+            background: linear-gradient(45deg, #ff6b6b, #4a148c);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Animations */
+        .background-effects div {
+            position: fixed;
+            pointer-events: none;
+            animation-iteration-count: infinite;
+        }
+
+        .confetti {
+            width: 15px;
+            height: 15px;
+            background: #ffd700;
+            animation: fall 3s linear infinite;
+        }
+
+        .bubble {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            animation: float 4s ease-in infinite;
+        }
+
+        @keyframes fall {
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { transform: translateY(50vh) scale(1); opacity: 1; }
+            100% { transform: translateY(0) scale(0.2); opacity: 0; }
+        }
+
+        .container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .locked-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            animation: glow 2s infinite;
+        }
+
+        h1 {
+            background: linear-gradient(45deg, #ffeb3b, #ff4081);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+            font-size: 2.8em;
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: messageIn 1.5s ease-out;
+            max-width: 600px;
+        }
+
+        @keyframes messageIn {
+            0% { transform: translateY(100px) rotate(-5deg); opacity: 0; }
+            100% { transform: translateY(0) rotate(0); opacity: 1; }
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 800px;
+        }
+
+        .flip-container {
+            perspective: 1000px;
+            width: 250px;
+            height: 250px;
+        }
+
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: all 0.6s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .card-front {
+            background: #fff;
+            transform: rotateY(0deg);
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s;
+        }
+
+        .card-back {
+            background: linear-gradient(45deg, #ff4081, #ffeb3b);
+            transform: rotateY(180deg);
+            flex-direction: column;
+            color: white;
+            font-size: 1.1em;
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Cake Animation */
+        .cake-container {
+            position: relative;
+            margin: 20px;
+            animation: floatCake 4s ease-in-out infinite;
+        }
+
+        .cake {
+            width: 200px;
+            height: 200px;
+            background: url('cake.png') no-repeat center/cover;
+            position: relative;
+        }
+
+        
+        }
+
+        @keyframes candleFlicker {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes floatCake {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Age Counter */
+        .age-counter {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: slideIn 1s ease-out;
+        }
+
+        .age-counter h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .age-counter p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+      
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects" id="effects"></div>
+
+    <div class="locked-screen">
+        <h2>✨ A Magical Surprise Awaits Soumya Singh on 17th Feb 2025! 🎁</h2>
+    </div>
+
+    <div class="container">
+        <h1 class="floating-text">🌟Happy 19th Birthday! 🎉</h1>
+        
+        <div class="message-box">
+            <p>Hi Soumya! Happy 19th Birthday! 🎂<br><br>
+            Today is all about celebrating you—your passion, strength, and amazing achievements. 
+            May this year bring you closer to your dreams with success and joy in every step. 
+            Keep shining and embracing every opportunity that comes your way. 
+            Enjoy your special day, and here's to a brilliant year ahead. 🌟<br><br>
+            Happy Birthday! 🥳</p>
+        </div>
+
+        <!-- Age Counter -->
+        
+        <div class="age-counter">
+     <div id="age"></div>        
+    <h2>Your Age</h2>
+            <p id="age"></p>
+        </div>
+
+        <!-- Cake Animation -->
+        <div class="cake-container">
+            <div class="cake">
+                <div class="candle"></div>
+            </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="gallery">
+            <!-- Flip Cards -->
+            <div class="flip-container">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-front">
+                        <img src="1image.jpg" >
+                    </div>
+                    <div class="card-back">
+                        🌸 Your Smile Lights Up the World! 🌸
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-container">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-front">
+                        <img src="2image.jpg">
+                    </div>
+                    <div class="card-back">
+                        🎂 Make a Wish! The Best is Yet to Come! ✨
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-container">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-front">
+                        <img src="3image.jpg">
+                    </div>
+                    <div class="card-back">
+                        🌠 Reach for the Stars, Shining Star! 🌌
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-container">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-front">
+                        <img src="4image.jpg">
+                    </div>
+                    <div class="card-back">
+                        🌺 May Your Life Bloom with Happiness! 🌼
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Background Music -->
+
+       <audio id="birthdaySong" loop>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+        
+    </div>
+
+    <script>
+        function createEffects() {
+            const effects = document.getElementById('effects');
+            const effectsTypes = ['confetti', 'bubble'];
+            
+            setInterval(() => {
+                const effect = document.createElement('div');
+                effect.className = effectsTypes[Math.floor(Math.random() * effectsTypes.length)];
+                effect.style.left = Math.random() * 100 + 'vw';
+                effect.style.animationDuration = Math.random() * 3 + 2 + 's';
+                effects.appendChild(effect);
+                
+                setTimeout(() => effect.remove(), 5000);
+            }, 100);
+        }
+
+        function checkDate() {
+            const targetDate = new Date('2025-01-17T00:00:00');
+            const now = new Date();
+            
+            if (now >= targetDate) {
+                document.querySelector('.locked-screen').style.display = 'none';
+                document.querySelector('.container').style.display = 'flex';
+                startCelebration();
+            } else {
+                setTimeout(checkDate, 1000);
+            }
+        }
+
+        function startCelebration() {
+            createEffects();
+            const audio = document.getElementById('birthdaySong');
+            document.body.addEventListener('click', () => audio.play());
+            
+            // Add initial effects
+            for(let i=0; i<50; i++) {
+                setTimeout(() => {
+                    const effect = document.createElement('div');
+                    effect.className = Math.random() > 0.5 ? 'confetti' : 'bubble';
+                    effect.style.left = Math.random() * 100 + 'vw';
+                    effect.style.animationDuration = Math.random() * 3 + 2 + 's';
+                    document.getElementById('effects').appendChild(effect);
+                }, i * 50);
+            }
+        }
+
+        function calculateAge() {
+    const birthDate = new Date('2006-02-17T00:00:00'); // Soumya's birthdate
+    const now = new Date();
+    const diff = now - birthDate;
+
+    // Calculate years
+    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+    
+    // Calculate months
+    const months = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+    
+    // Calculate days
+    const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+    
+    // Calculate hours
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    // Calculate minutes
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    // Calculate seconds
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    // Update display
+    document.getElementById('age').innerHTML = `
+        ${years} Years<br>
+        ${months} Months<br>
+        ${days} Days<br>
+        ${hours} Hours<br>
+        ${minutes} Minutes<br>
+        ${seconds} Seconds
+    `;
+}
+
+// Update every second
+setInterval(calculateAge, 1000);
+        setInterval(calculateAge, 1000);
+        checkDate();
+    </script>
+</body>
+</html>

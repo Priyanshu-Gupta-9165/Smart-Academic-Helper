@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AI Presentation Agent</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">AI</div>
+      <div>
+        <h1>AI Presentation Agent</h1>
+        <div class="subtitle">Create professional presentations with AI assistance</div>
+      </div>
+    </header>
+    
+    <div class="tabs">
+      <div class="tab active" data-tab="create">Create Presentation</div>
+      <div class="tab" data-tab="chat">AI Chat</div>
+      <div class="tab" data-tab="settings">Settings</div>
+    </div>
+    
+    <!-- Create Tab -->
+    <div class="tab-content active" id="create-tab">
+      <div class="card">
+        <div class="card-title">
+          <i>📝</i>
+          <h2>Create New Presentation</h2>
+        </div>
+        
+        <div class="form-group">
+          <label for="presentation-topic">Presentation Topic</label>
+          <input type="text" id="presentation-topic" placeholder="Enter your presentation topic...">
+        </div>
+        
+        <div class="form-group">
+          <label for="slide-count">Number of Slides</label>
+          <input type="number" id="slide-count" min="1" max="20" value="5">
+        </div>
+        
+        <div class="form-group">
+          <label for="presentation-style">Presentation Style</label>
+          <select id="presentation-style">
+            <option value="professional">Professional</option>
+            <option value="modern">Modern & Creative</option>
+            <option value="minimalist">Minimalist</option>
+            <option value="educational">Educational</option>
+            <option value="marketing">Marketing</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Additional Options</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="include-images" checked>
+            <label for="include-images">Include relevant images</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="include-animations">
+            <label for="include-animations">Add slide animations</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="include-icons" checked>
+            <label for="include-icons">Add icons and visuals</label>
+          </div>
+        </div>
+        
+        <button id="generate-btn">
+          <i>✨</i> Generate Presentation
+        </button>
+        
+        <div class="preview hidden" id="preview-section">
+          <h3>Preview Outline</h3>
+          <div class="preview-content" id="slide-preview">
+            <!-- Preview slides will be added here -->
+          </div>
+        </div>
+        
+        <div class="btn-group hidden" id="action-buttons">
+          <button id="export-google-btn" class="secondary">
+            <i>📊</i> Export to Google Slides
+          </button>
+          <button id="export-powerpoint-btn" class="secondary">
+            <i>💼</i> Export to PowerPoint
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chat Tab -->
+    <div class="tab-content" id="chat-tab">
+      <div class="card">
+        <div class="card-title">
+          <i>💬</i>
+          <h2>AI Presentation Assistant</h2>
+        </div>
+        
+        <div class="chat-container" id="chat-container">
+          <div class="chat-message ai-message">
+            Hello! I'm your AI presentation assistant. How can I help you with your presentation today?
+          </div>
+        </div>
+        
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Ask about presentations...">
+          <button id="send-chat-btn">
+            <i>📤</i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div class="tab-content" id="settings-tab">
+      <div class="card">
+        <div class="card-title">
+          <i>⚙️</i>
+          <h2>Settings & Preferences</h2>
+        </div>
+        
+        <div class="form-group">
+          <label for="ai-model">AI Model</label>
+          <select id="ai-model">
+            <option value="deepseek">DeepSeek (Recommended)</option>
+            <option value="openai">OpenAI GPT-4</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="custom">Custom API</option>
+          </select>
+        </div>
+        
+        <div class="model-config" id="custom-api-config">
+          <div class="form-group">
+            <label for="api-key">API Key</label>
+            <input type="password" id="api-key" placeholder="Enter your API key">
+          </div>
+          
+          <div class="form-group">
+            <label for="api-url">API Endpoint</label>
+            <input type="text" id="api-url" placeholder="https://api.example.com/v1">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="default-template">Default Template</label>
+          <select id="default-template">
+            <option value="professional-blue">Professional Blue</option>
+            <option value="creative-colorful">Creative Colorful</option>
+            <option value="dark-minimal">Dark Minimal</option>
+            <option value="light-clean">Light & Clean</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Preferences</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="auto-open" checked>
+            <label for="auto-open">Auto-open when presentation site is detected</label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="auto-suggest" checked>
+            <label for="auto-suggest">Show template suggestions</label>
+          </div>
+        </div>
+        
+        <button id="save-settings-btn">
+          <i>💾</i> Save Settings
+        </button>
+      </div>
+    </div>
+    
+    <div class="status hidden" id="status">
+      <div class="dot"></div>
+      <div>Creating your presentation. This may take a moment...</div>
+    </div>
+  </div>
+  
+  <script src="sidepanel.js"></script>
+</body>
+</html>

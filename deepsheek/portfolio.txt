@@ -1,0 +1,65 @@
+
+NAVBAR:-
+Create a modern Glassmorphism Navbar for a portfolio website using HTML, CSS, and Bootstrap. The navbar should have a transparent frosted-glass effect with soft shadows and a subtle glowing border. Ensure it is fully responsive. Include:" 
+✔ Logo (Left Side) - A stylish logo or text with a glowing effect. 
+✔ Navigation Links (Right Side) - Home, About, Skills, Education, Experience, Projects, Contact. 
+✔ Hover Effect - Links should have a soft glow effect on hover. 
+✔ Active State - The currently active section should have a slightly brighter glow. 
+✔ Sticky Navbar - The navbar should remain fixed at the top while scrolling. 
+✔ Mobile Responsive - On smaller screens, show a hamburger menu that expands into a mobile-friendly sidebar with a smooth slide effect
+
+
+
+HERO:-
+Create a Hero Section for the portfolio website with a full-screen frosted-glass effect and smooth glowing animations. Include:"
+✔ My Name in Large, Bold Text (modern, futuristic font with neon glow)
+✔ A Short Description (e.g., "Creative Web Developer | Frontend Designer")
+✔ Call-to-Action Buttons (e.g., "Hire Me" and "View Portfolio") with hover animations
+✔ A Cool Background Effect (blurred abstract shapes, floating particles, gradient glow)
+✔ Social Media Icons (LinkedIn, GitHub, Instagram, You tube etc.) with interactive hover effects
+Navbar I already created maksure about all websites theme colors same.
+
+
+
+ABOUT ME :-
+Create an About Me Section with a glassmorphism effect. The section should include:"
+✔Profile Image inside a Glassmorphic Card (with soft shadows and reflections)
+✔About Me Text-A short introduction with a cool glowing border 
+✔Glassmorphic Info Cards - Display Name, Email, Location, and Freelance Status
+✔Subtle Background Animation (like light glowing dots or a smooth gradient)
+
+
+SKILL:-
+Create a Skills Section using Glassmorphism, showcasing different skills. Include:"
+✔Skill Progress Bars or Circular Progress Bars (animated with a glowing effect)
+✔Skills Categorized-Web Development, Frontend Technologies, Tools, etc.
+✔Hover Effect-Each skill card should slightly glow when hovered
+✔Background Effect-Subtle floating elements or particles
+
+
+PROJECT:-
+Create a Projects Section showcasing my work using Glassmorphism. Include:"
+✔Project Cards with Glass Effect - Each card should be transparent with soft shadows
+✔Image, Project Title, Description, and Live Demo Button
+✔Hover Effects-Cards should scale up slightly with a soft glow
+✔Category Filters-Allow filtering by Web. Design, Al etc. +add lightbox
+
+
+CONCACTS:-
+Create a Contact Section in a Glassmorphism style. Include:"
+✔Glassmorphic Contact Form-Fields: Name, Email, Message, Submit Button
+✔Contact info Cards - Display Email, Phone, Location with hover glow effect
+✔Background Effect-Subtle animated particles or gradient glo
+
+
+
+
+FOOTER:-
+Create a modern Glassmorphism Footer for a portfolio website using HTML, CSS, and Bootstrap. The footer should have a transparent frosted-glass effect with soft shadows and a subtle glowing border. Ensure it is fully responsive. Include:"
+✔Three Column Layout (For larger screens, stacked for mobile)
+✔Column 1-Logo & Short Bio (A stylish logo with a short about-me text)
+✔Column 2-Quick Links (Home, About, Skills, Projects, Contact)
+✔Column 3-Contact information (Email, Phone, Social Media Icons)
+✔Social Media Icons (With hover glow effect)
+✔Copyright Notice (E.g., " 2024 Your Name. All Rights Reserved.")
+✔Smooth Scroll-to-Top Button (With a glowing hover effect
