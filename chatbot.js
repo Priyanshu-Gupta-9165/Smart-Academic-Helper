@@ -3,10 +3,6 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
-// API Configuration
-const API_KEY = 'AIzaSyDi8azds2EkWBoOy8b2PbWEGbsydgflG9w';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-
 // System instruction for precise, concise responses
 const SYSTEM_INSTRUCTION = `You are BrainBuddy, a smart AI study assistant.
 
@@ -52,13 +48,11 @@ function renderMath(text) {
 // Render markdown to formatted HTML
 function renderMarkdown(text) {
     if (typeof marked === 'undefined') return text;
-
-    // First render math, then markdown
     let processed = renderMath(text);
     return marked.parse(processed);
 }
 
-// Create a bot message div with avatar (returns the content element for typing)
+// Create a bot message div with avatar (returns the message div)
 function createBotMessageDiv() {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message bot';
@@ -77,44 +71,13 @@ function createBotMessageDiv() {
     return messageDiv;
 }
 
-// ChatGPT-style typing effect: reveal text word by word
+// ChatGPT-style typing effect: reveal text word by word (used for error messages)
 async function typeResponse(messageDiv, fullText) {
     const contentEl = messageDiv.querySelector('.message-content');
-    const renderedHTML = renderMarkdown(fullText);
 
-    // Create a hidden div to hold the full rendered content
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = renderedHTML;
-
-    // Get all the text content split into words
-    const words = fullText.split(/(\s+)/);
-    let currentText = '';
-
-    // Remove typing indicator
     const typingIndicator = contentEl.querySelector('.typing-indicator');
     if (typingIndicator) typingIndicator.remove();
 
-    // Type word by word
-    for (let i = 0; i < words.length; i++) {
-        currentText += words[i];
-
-        // Re-render markdown at intervals for smooth appearance
-        if (i % 3 === 0 || i === words.length - 1) {
-            contentEl.innerHTML = renderMarkdown(currentText);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Typing speed: faster for spaces, slight pause for punctuation
-        const word = words[i];
-        let delay = 20;
-        if (word.match(/[.!?]\s*$/)) delay = 80;
-        else if (word.match(/[,;:]\s*$/)) delay = 40;
-        else if (word.trim() === '') delay = 5;
-
-        await new Promise(r => setTimeout(r, delay));
-    }
-
-    // Final render to ensure complete formatting
     contentEl.innerHTML = renderMarkdown(fullText);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -135,51 +98,122 @@ function addUserMessage(message) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Handle API request with retry logic
-async function generateResponse(prompt, retries = 3) {
-    for (let attempt = 0; attempt < retries; attempt++) {
+// Stream response from NVIDIA DeepSeek API via proxy
+async function generateResponse(prompt, messageDiv) {
+    const contentEl = messageDiv.querySelector('.message-content');
+
+    for (let attempt = 0; attempt < 3; attempt++) {
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(PROXY_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
-                    system_instruction: {
-                        parts: [{ text: SYSTEM_INSTRUCTION }]
-                    },
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }]
+                    apiKey: NVIDIA_API_KEY,
+                    model: NVIDIA_MODEL,
+                    messages: [
+                        { role: 'system', content: SYSTEM_INSTRUCTION },
+                        { role: 'user', content: prompt }
+                    ],
+                    temperature: 1,
+                    top_p: 0.95,
+                    max_tokens: 8192,
+                    stream: true,
+                    extra_body: { chat_template_kwargs: { thinking: true } }
                 })
             });
 
             if (response.status === 429) {
-                console.warn(`Rate limited (attempt ${attempt + 1}/${retries}). Retrying...`);
-                await new Promise(r => setTimeout(r, (attempt + 1) * 2000));
+                const wait = 5000 * (attempt + 1);
+                console.warn(`Rate limited (attempt ${attempt + 1}/3). Waiting ${wait / 1000}s...`);
+                await new Promise(r => setTimeout(r, wait));
                 continue;
             }
 
             if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
+                const errData = await response.text();
                 console.error(`API Error ${response.status}:`, errData);
                 return `Sorry, the AI service returned an error (${response.status}). Please try again later.`;
             }
 
-            const data = await response.json();
+            // Remove typing indicator
+            const typingIndicator = contentEl.querySelector('.typing-indicator');
+            if (typingIndicator) typingIndicator.remove();
 
-            if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return data.candidates[0].content.parts[0].text;
+            // Read SSE stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = '';
+            let reasoningText = '';
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // keep incomplete line in buffer
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed || !trimmed.startsWith('data: ')) continue;
+
+                    const data = trimmed.slice(6);
+                    if (data === '[DONE]') break;
+
+                    try {
+                        const parsed = JSON.parse(data);
+                        const delta = parsed.choices?.[0]?.delta;
+                        if (!delta) continue;
+
+                        // Handle reasoning content (thinking tokens)
+                        if (delta.reasoning_content) {
+                            reasoningText += delta.reasoning_content;
+                        }
+
+                        // Handle regular content
+                        if (delta.content) {
+                            fullText += delta.content;
+                        }
+
+                        // Update display
+                        if (delta.content || delta.reasoning_content) {
+                            let displayHTML = '';
+                            if (reasoningText) {
+                                displayHTML += `<details class="thinking-section"><summary>💭 Thinking...</summary><div class="thinking-content">${renderMarkdown(reasoningText)}</div></details>`;
+                            }
+                            displayHTML += renderMarkdown(fullText);
+                            contentEl.innerHTML = displayHTML;
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    } catch (e) {
+                        // Skip malformed JSON chunks
+                    }
+                }
             }
-            console.error('Unexpected response:', data);
-            return "Sorry, I received an unexpected response. Please try again.";
+
+            // Final render
+            let finalHTML = '';
+            if (reasoningText) {
+                finalHTML += `<details class="thinking-section"><summary>💭 Thinking...</summary><div class="thinking-content">${renderMarkdown(reasoningText)}</div></details>`;
+            }
+            finalHTML += renderMarkdown(fullText || 'Sorry, I received an empty response. Please try again.');
+            contentEl.innerHTML = finalHTML;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            return null; // streaming handled directly
+
         } catch (error) {
             console.error(`Network error (attempt ${attempt + 1}):`, error);
-            if (attempt === retries - 1) {
-                return "Sorry, I couldn't connect to the AI service. Check your internet and try again.";
+            if (attempt === 2) {
+                return "Sorry, I couldn't connect to the AI service. Make sure the proxy server is running (node proxy-server.js) and try again.";
             }
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 2000));
         }
     }
-    return "The AI service is busy. Please try again in a moment.";
+    return "The AI is rate-limited right now. Please wait a moment and try again.";
 }
 
 // Handle user input
@@ -187,21 +221,19 @@ async function handleUserInput() {
     const prompt = userInput.value.trim();
     if (!prompt) return;
 
-    // Disable input while processing
     sendBtn.disabled = true;
     userInput.disabled = true;
 
-    // Add user message
     addUserMessage(prompt);
     userInput.value = '';
 
-    // Create bot message with typing indicator
     const botMessageDiv = createBotMessageDiv();
 
     try {
-        const response = await generateResponse(prompt);
-        // Type out the response like ChatGPT
-        await typeResponse(botMessageDiv, response);
+        const fallbackText = await generateResponse(prompt, botMessageDiv);
+        if (fallbackText) {
+            await typeResponse(botMessageDiv, fallbackText);
+        }
     } catch (error) {
         const contentEl = botMessageDiv.querySelector('.message-content');
         contentEl.innerHTML = '<p>Oops! Something went wrong. Please try again.</p>';

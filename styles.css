@@ -1653,3 +1653,40 @@ main {
 .dark-mode .quote-author {
     color: #a0aec0;
 }
+
+/* DeepSeek Thinking/Reasoning Section */
+.thinking-section {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.thinking-section summary {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.thinking-section summary:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.thinking-content {
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    border-top: 1px solid var(--border-color);
+    max-height: 300px;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+
+.thinking-content p {
+    margin-bottom: 0.5rem;
+}
