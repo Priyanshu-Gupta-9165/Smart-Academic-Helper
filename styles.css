@@ -2371,3 +2371,29 @@ main {
         opacity: 1;
     }
 }
+
+/* ========================== */
+/* Global Button Shape Design */
+/* ========================== */
+button,
+.btn,
+.btn-clear,
+.filter-btn,
+.priority-btn,
+.todo-add-btn,
+.social-link {
+    border-radius: 10px !important;
+}
+
+/* Make sure icon-only buttons remain circular */
+.delete-btn,
+.theme-toggle,
+.send-btn,
+.options-btn {
+    border-radius: 50% !important;
+}
+
+/* Adjust padding for rectangular buttons to look balanced */
+.btn {
+    padding: 0.6rem 1.4rem !important;
+}
