@@ -126,19 +126,74 @@
                 <p>Keep track of your assignments and deadlines</p>
             </div>
             <div class="glass-card todo-container">
-                <div class="todo-header">
-                    <input type="text" id="todo-input" placeholder="Add a new task...">
-                    <button id="add-todo" class="btn primary">Add</button>
+                <!-- Todo Input Area -->
+                <div class="todo-input-area">
+                    <div class="todo-input-row">
+                        <div class="todo-input-wrapper">
+                            <i class="fas fa-plus-circle todo-input-icon"></i>
+                            <input type="text" id="todo-input" placeholder="What do you need to do?">
+                        </div>
+                        <button id="add-todo" class="btn primary todo-add-btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <div class="todo-options-row">
+                        <div class="priority-selector">
+                            <button class="priority-btn" data-priority="low" title="Low Priority">
+                                <i class="fas fa-flag"></i> Low
+                            </button>
+                            <button class="priority-btn active" data-priority="medium" title="Medium Priority">
+                                <i class="fas fa-flag"></i> Med
+                            </button>
+                            <button class="priority-btn" data-priority="high" title="High Priority">
+                                <i class="fas fa-flag"></i> High
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Progress Bar -->
+                <div class="todo-progress-section">
+                    <div class="todo-progress-header">
+                        <span class="todo-progress-label">Progress</span>
+                        <span class="todo-progress-percent" id="todo-progress-percent">0%</span>
+                    </div>
+                    <div class="todo-progress-bar">
+                        <div class="todo-progress-fill" id="todo-progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
                 <div class="todo-filters">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="active">Active</button>
-                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-list"></i> All
+                        <span class="filter-count" id="count-all">0</span>
+                    </button>
+                    <button class="filter-btn" data-filter="active">
+                        <i class="fas fa-clock"></i> Active
+                        <span class="filter-count" id="count-active">0</span>
+                    </button>
+                    <button class="filter-btn" data-filter="completed">
+                        <i class="fas fa-check-circle"></i> Done
+                        <span class="filter-count" id="count-completed">0</span>
+                    </button>
                 </div>
+
+                <!-- Todo List -->
                 <ul class="todo-list" id="todo-list"></ul>
+
+                <!-- Empty State -->
+                <div class="todo-empty" id="todo-empty">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>No tasks yet. Add one above!</p>
+                </div>
+
+                <!-- Footer Stats -->
                 <div class="todo-stats">
                     <span id="tasks-left">0 tasks left</span>
-                    <button id="clear-completed" class="btn secondary">Clear Completed</button>
+                    <button id="clear-completed" class="btn-clear">
+                        <i class="fas fa-broom"></i> Clear Done
+                    </button>
                 </div>
             </div>
         </section>
@@ -275,33 +330,50 @@
     </script>
 
     <!-- Footer Section -->
-    <footer class="glass-card">
+    <footer>
         <div class="footer-content">
-            <div class="footer-section">
-                <h3>Student Hub</h3>
-                <p>Your 24/7 academic companion designed to help you succeed in your studies.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#hero">Home</a></li>
-                    <li><a href="#chatbot">AI Assistant</a></li>
-                    <li><a href="#sgpa">SGPA Calculator</a></li>
-                    <li><a href="#todo">Todo List</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Connect With Us</h3>
-                <div class="social-icons">
-
-                    <a href="https://github.com/Priyanshu-Gupta-9165"><i class="fab fa-github"></i></a>
-
-                    <a href="https://www.linkedin.com/in/priyanshu-gupta-tech/"><i class="fab fa-linkedin"></i></a>
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Student Hub</h3>
+                </div>
+                <p>Your 24/7 academic companion designed to help you succeed in your studies. Powered by AI to give you
+                    the best learning experience.</p>
+                <div class="footer-social">
+                    <a href="https://github.com/Priyanshu-Gupta-9165" target="_blank" class="social-link">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/priyanshu-gupta-tech/" target="_blank" class="social-link">
+                        <i class="fab fa-linkedin"></i>
+                        <span>LinkedIn</span>
+                    </a>
                 </div>
             </div>
+            <div class="footer-links-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-nav">
+                    <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#chatbot"><i class="fas fa-robot"></i> AI Assistant</a></li>
+                    <li><a href="#sgpa"><i class="fas fa-calculator"></i> SGPA Calculator</a></li>
+                    <li><a href="#todo"><i class="fas fa-tasks"></i> Todo List</a></li>
+                    <li><a href="#feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-section">
+                <h4>Features</h4>
+                <ul class="footer-nav">
+                    <li><a href="#chatbot"><i class="fas fa-brain"></i> DeepSeek AI</a></li>
+                    <li><a href="#todo"><i class="fas fa-flag"></i> Priority Tasks</a></li>
+                    <li><a href="#sgpa"><i class="fas fa-chart-bar"></i> Grade Tracking</a></li>
+                    <li><a href="#"><i class="fas fa-moon"></i> Dark Mode</a></li>
+                </ul>
+            </div>
         </div>
+        <div class="footer-divider"></div>
         <div class="footer-bottom">
-            <p>&copy; 2023 Student Hub. All rights reserved.</p>
+            <p>&copy; 2025 Student Hub. Built with <i class="fas fa-heart" style="color: #ef4444;"></i> by <a
+                    href="https://github.com/Priyanshu-Gupta-9165" target="_blank">Priyanshu Gupta</a></p>
         </div>
     </footer>
 
