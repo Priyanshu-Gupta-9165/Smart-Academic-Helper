@@ -235,6 +235,13 @@ header {
     }
 }
 
+@media (max-width: 576px) {
+    header {
+        margin: 0.5rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
 .logo {
     display: flex;
     align-items: center;
@@ -249,6 +256,16 @@ header {
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    .logo h1 {
+        font-size: 1.25rem;
+    }
+
+    .logo i {
+        font-size: 1.5rem;
+    }
 }
 
 nav ul {
@@ -266,6 +283,7 @@ nav ul {
     padding: 0.5rem;
     font-size: 1.5rem;
     color: var(--primary-color);
+    margin-left: auto;
 }
 
 @media (max-width: 767px) {
@@ -346,6 +364,13 @@ nav a:hover::after {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+@media (max-width: 576px) {
+    .subject-field {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
 .subject-field:hover {
     transform: translateY(-2px);
     box-shadow: var(--card-shadow);
@@ -375,6 +400,16 @@ nav a:hover::after {
 .subject-grade {
     flex: 1;
     min-width: 180px;
+}
+
+@media (max-width: 576px) {
+    .subject-credit {
+        width: 100%;
+    }
+
+    .subject-grade {
+        min-width: 100%;
+    }
 }
 
 .subject-name:focus,
@@ -454,6 +489,25 @@ nav a:hover::after {
 
     .hero h1 {
         font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 1rem;
+        min-height: 60vh;
+    }
+
+    .hero-content {
+        padding: 1rem;
+    }
+
+    .hero h1 {
+        font-size: 1.75rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
     }
 }
 
@@ -1336,7 +1390,7 @@ main {
 .message {
     display: flex;
     gap: 1rem;
-    max-width: 90%;
+    max-width: 95%;
     animation: fadeIn 0.3s ease;
 }
 
@@ -1728,6 +1782,12 @@ main {
     }
 }
 
+@media (max-width: 576px) {
+    .sgpa-container {
+        padding: 1rem;
+    }
+}
+
 .sgpa-form {
     flex: 2;
     display: flex;
@@ -2010,6 +2070,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    width: 100%;
 }
 
 @media (min-width: 1024px) {
@@ -2026,6 +2087,12 @@ main {
         flex: 1;
         position: sticky;
         top: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-grid {
+        gap: 1rem;
     }
 }
 
