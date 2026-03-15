@@ -74,23 +74,32 @@
                 <p>Your 24/7 study companion. Ask any academic question!</p>
             </div>
             <div class="glass-card chatbot-container">
+
+                <!-- Chat Messages -->
                 <div class="chat-messages" id="chat-messages">
                     <div class="message bot">
                         <div class="avatar">
-                            <i class="fas fa-robot"></i>
+                            <i class="fas fa-brain"></i>
                         </div>
                         <div class="message-content">
                             <p>Hello! I'm your AI study assistant. How can I help you today?</p>
                         </div>
                     </div>
                 </div>
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Ask me anything...">
-                    <button id="send-btn" class="btn primary">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                    <div class="voice-input">
-                        <i class="fas fa-microphone"></i>
+
+                <!-- Modern Chat Input -->
+                <div class="chat-input-wrapper">
+                    <div class="chat-input-container">
+                        <button class="voice-input" title="Voice Input (Coming Soon)">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <textarea id="user-input" placeholder="Message BrainBuddy..." rows="1"></textarea>
+                        <button id="send-btn" class="send-btn" title="Send Message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="chat-footer-note">
+                        BrainBuddy can make mistakes. Consider verifying important academic information.
                     </div>
                 </div>
             </div>
@@ -119,13 +128,16 @@
             </div>
         </section>
 
-        <!-- Todo List Section -->
-        <section id="todo" class="section">
-            <div class="section-header">
-                <h2>Todo List</h2>
-                <p>Keep track of your assignments and deadlines</p>
-            </div>
-            <div class="glass-card todo-container">
+        <!-- Dashboard Widgets (Todo & Feedback Side-by-Side) -->
+        <section id="dashboard-widgets" class="section dashboard-grid">
+
+            <!-- Todo Box -->
+            <div class="glass-card todo-container widget-card">
+                <div class="section-header widget-header">
+                    <h2>Todo List</h2>
+                    <p>Keep track of your assignments and deadlines</p>
+                </div>
+
                 <!-- Todo Input Area -->
                 <div class="todo-input-area">
                     <div class="todo-input-row">
@@ -196,194 +208,280 @@
                     </button>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <!-- Feedback Section -->
-    <section id="feedback" class="section">
-        <div class="section-header">
-            <h2>Your Feedback</h2>
-            <p>Help us improve by sharing your experience</p>
-        </div>
-        <div class="glass-card feedback-container">
-            <div class="rating-container">
-                <h3>Rate your experience</h3>
-                <div class="star-rating">
-                    <i class="far fa-star" data-rating="1"></i>
-                    <i class="far fa-star" data-rating="2"></i>
-                    <i class="far fa-star" data-rating="3"></i>
-                    <i class="far fa-star" data-rating="4"></i>
-                    <i class="far fa-star" data-rating="5"></i>
+            <!-- Feedback Box -->
+            <div class="glass-card feedback-container widget-card">
+                <div class="section-header widget-header">
+                    <h2>Your Feedback</h2>
+                    <p>Help us improve by sharing your experience</p>
                 </div>
+                <div class="rating-container">
+                    <h3>Rate your experience</h3>
+                    <div class="star-rating">
+                        <i class="far fa-star" data-rating="1"></i>
+                        <i class="far fa-star" data-rating="2"></i>
+                        <i class="far fa-star" data-rating="3"></i>
+                        <i class="far fa-star" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+                <!-- Integrated Formspree Form -->
+                <form class="feedback-form" id="feedback-form-html" action="https://formspree.io/f/xvgowrzj"
+                    method="POST">
+                    <input type="hidden" name="rating" id="rating-input" value="0">
+                    <textarea name="message" id="feedback-text" placeholder="Share your thoughts with us..."
+                        required></textarea>
+                    <button type="submit" id="submit-feedback" class="btn primary">Submit Feedback</button>
+                </form>
             </div>
-            <div class="feedback-form">
-                <textarea id="feedback-text" placeholder="Share your thoughts with us..."></textarea>
-                <button id="submit-feedback" class="btn primary">Submit Feedback</button>
-            </div>
-        </div>
+        </section>
 
         <!-- Feedback Success Modal -->
         <div class="modal-overlay" id="modal-overlay"></div>
         <div class="feedback-modal glass-card" id="feedback-modal">
             <h3>Thank You!</h3>
-            <p>Your feedback has been submitted successfully. We appreciate your time and input!</p>
+            <p>Your feedback has been submitted successfully to our email. We appreciate your time and input!</p>
             <button class="btn primary" onclick="closeModal()">Close</button>
         </div>
-    </section>
 
-    <script>
-        // Star Rating Functionality
-        const starRating = document.querySelector('.star-rating');
-        const stars = starRating.querySelectorAll('i');
-        let selectedRating = 0;
+        <!-- Custom UI Alert Modal -->
+        <div class="ui-alert-modal glass-card" id="ui-alert-modal">
+            <div class="ui-alert-icon-container">
+                <i id="ui-alert-icon" class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 id="ui-alert-title">Oops!</h3>
+            <p id="ui-alert-message">Something went wrong.</p>
+            <button class="btn primary" onclick="closeUiAlert()">Okay</button>
+        </div>
 
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = parseInt(star.getAttribute('data-rating'));
-                selectedRating = rating;
-                updateStars();
+        <script>
+            // Star Rating Functionality
+            const starRating = document.querySelector('.star-rating');
+            const stars = starRating.querySelectorAll('i');
+            let selectedRating = 0;
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.getAttribute('data-rating'));
+                    selectedRating = rating;
+                    updateStars();
+                });
+
+                star.addEventListener('mouseover', () => {
+                    const rating = parseInt(star.getAttribute('data-rating'));
+                    highlightStars(rating);
+                });
+
+                star.addEventListener('mouseout', () => {
+                    highlightStars(selectedRating);
+                });
             });
 
-            star.addEventListener('mouseover', () => {
-                const rating = parseInt(star.getAttribute('data-rating'));
-                highlightStars(rating);
-            });
+            function updateStars() {
+                stars.forEach((star, index) => {
+                    if (index < selectedRating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas', 'active');
+                    } else {
+                        star.classList.remove('fas', 'active');
+                        star.classList.add('far');
+                    }
+                });
+            }
 
-            star.addEventListener('mouseout', () => {
-                highlightStars(selectedRating);
-            });
-        });
+            function highlightStars(rating) {
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
 
-        function updateStars() {
-            stars.forEach((star, index) => {
-                if (index < selectedRating) {
-                    star.classList.remove('far');
-                    star.classList.add('fas', 'active');
-                } else {
-                    star.classList.remove('fas', 'active');
-                    star.classList.add('far');
+            // Custom UI Alert
+            function showUiAlert(title, message, type = 'error') {
+                const titleEl = document.getElementById('ui-alert-title');
+                const messageEl = document.getElementById('ui-alert-message');
+                const iconEl = document.getElementById('ui-alert-icon');
+
+                titleEl.innerText = title;
+                messageEl.innerText = message;
+
+                // Reset icon classes
+                iconEl.className = 'fas';
+
+                // Theme based on type
+                switch (type) {
+                    case 'error':
+                        iconEl.classList.add('fa-exclamation-circle');
+                        titleEl.style.color = '#ef4444'; // Red
+                        iconEl.style.color = '#ef4444';
+                        break;
+                    case 'success':
+                        iconEl.classList.add('fa-check-circle');
+                        titleEl.style.color = '#10b981'; // Green
+                        iconEl.style.color = '#10b981';
+                        break;
+                    case 'warning':
+                        iconEl.classList.add('fa-exclamation-triangle');
+                        titleEl.style.color = '#f59e0b'; // Yellow/Orange
+                        iconEl.style.color = '#f59e0b';
+                        break;
+                    case 'info':
+                    default:
+                        iconEl.classList.add('fa-info-circle');
+                        titleEl.style.color = 'var(--primary-color)'; // Blue/Indigo
+                        iconEl.style.color = 'var(--primary-color)';
+                        break;
+                }
+
+                document.getElementById('ui-alert-modal').classList.add('show');
+                document.getElementById('modal-overlay').classList.add('show');
+            }
+
+            function closeUiAlert() {
+                document.getElementById('ui-alert-modal').classList.remove('show');
+                document.getElementById('modal-overlay').classList.remove('show');
+            }
+
+            // Form Submission and Modal
+            const feedbackForm = document.getElementById('feedback-form-html');
+            const feedbackText = document.getElementById('feedback-text');
+            const ratingInput = document.getElementById('rating-input');
+            const modal = document.getElementById('feedback-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+
+            feedbackForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Stop normal form submission to handle it via JS
+                if (selectedRating === 0) {
+                    showUiAlert("Rating Required", 'Please select a star rating before submitting.', 'warning');
+                    return;
+                }
+                if (!feedbackText.value.trim()) {
+                    showUiAlert("Feedback Required", 'Please share your thoughts with us in the text box.', 'warning');
+                    return;
+                }
+
+                ratingInput.value = selectedRating; // set hidden field for Formspree
+
+                // Submit to Formspree using AJAX
+                const submitButton = document.getElementById('submit-feedback');
+                const originalText = submitButton.innerText;
+                submitButton.innerText = 'Sending...';
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch(feedbackForm.action, {
+                        method: feedbackForm.method,
+                        body: new FormData(feedbackForm),
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        // Show success modal with confetti
+                        showModal();
+                        createConfetti();
+
+                        // Reset form
+                        selectedRating = 0;
+                        updateStars();
+                        feedbackForm.reset();
+                    } else {
+                        showUiAlert("Submission Failed", "There was an issue sending your feedback. Please try again.", 'error');
+                    }
+                } catch (error) {
+                    showUiAlert("Network Error", "Could not connect to the feedback server. Please check your connection.", 'error');
+                } finally {
+                    submitButton.innerText = originalText;
+                    submitButton.disabled = false;
                 }
             });
-        }
 
-        function highlightStars(rating) {
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.remove('far');
-                    star.classList.add('fas');
-                } else {
-                    star.classList.remove('fas');
-                    star.classList.add('far');
+            function showModal() {
+                modal.classList.add('show');
+                modalOverlay.classList.add('show');
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                modalOverlay.classList.remove('show');
+            }
+
+            function createConfetti() {
+                const colors = ['#6366f1', '#10b981', '#3b82f6', '#ec4899'];
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
                 }
-            });
-        }
-
-        // Form Submission and Modal
-        const feedbackForm = document.querySelector('.feedback-form');
-        const feedbackText = document.getElementById('feedback-text');
-        const modal = document.getElementById('feedback-modal');
-        const modalOverlay = document.getElementById('modal-overlay');
-
-        document.getElementById('submit-feedback').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (selectedRating === 0) {
-                alert('Please select a rating');
-                return;
             }
-            if (!feedbackText.value.trim()) {
-                alert('Please share your thoughts with us');
-                return;
-            }
+        </script>
 
-            // Show success modal with confetti
-            showModal();
-            createConfetti();
-
-            // Reset form
-            selectedRating = 0;
-            updateStars();
-            feedbackText.value = '';
-        });
-
-        function showModal() {
-            modal.classList.add('show');
-            modalOverlay.classList.add('show');
-        }
-
-        function closeModal() {
-            modal.classList.remove('show');
-            modalOverlay.classList.remove('show');
-        }
-
-        function createConfetti() {
-            const colors = ['#6366f1', '#10b981', '#3b82f6', '#ec4899'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 3000);
-            }
-        }
-    </script>
-
-    <!-- Footer Section -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <div class="footer-logo">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h3>Student Hub</h3>
+        <!-- Footer Section -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Student Hub</h3>
+                    </div>
+                    <p>Your 24/7 academic companion designed to help you succeed in your studies. Powered by AI to give
+                        you
+                        the best learning experience.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/Priyanshu-Gupta-9165" target="_blank" class="social-link">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/priyanshu-gupta-tech/" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                            <span>LinkedIn</span>
+                        </a>
+                    </div>
                 </div>
-                <p>Your 24/7 academic companion designed to help you succeed in your studies. Powered by AI to give you
-                    the best learning experience.</p>
-                <div class="footer-social">
-                    <a href="https://github.com/Priyanshu-Gupta-9165" target="_blank" class="social-link">
-                        <i class="fab fa-github"></i>
-                        <span>GitHub</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/priyanshu-gupta-tech/" target="_blank" class="social-link">
-                        <i class="fab fa-linkedin"></i>
-                        <span>LinkedIn</span>
-                    </a>
+                <div class="footer-links-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-nav">
+                        <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#chatbot"><i class="fas fa-robot"></i> AI Assistant</a></li>
+                        <li><a href="#sgpa"><i class="fas fa-calculator"></i> SGPA Calculator</a></li>
+                        <li><a href="#todo"><i class="fas fa-tasks"></i> Todo List</a></li>
+                        <li><a href="#feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-section">
+                    <h4>Features</h4>
+                    <ul class="footer-nav">
+                        <li><a href="#chatbot"><i class="fas fa-brain"></i> AI Chatbot</a></li>
+                        <li><a href="#todo"><i class="fas fa-flag"></i> Priority Tasks</a></li>
+                        <li><a href="#sgpa"><i class="fas fa-chart-bar"></i> Grade Tracking</a></li>
+                        <li><a href="#"><i class="fas fa-moon"></i> Dark Mode</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="footer-links-section">
-                <h4>Quick Links</h4>
-                <ul class="footer-nav">
-                    <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="#chatbot"><i class="fas fa-robot"></i> AI Assistant</a></li>
-                    <li><a href="#sgpa"><i class="fas fa-calculator"></i> SGPA Calculator</a></li>
-                    <li><a href="#todo"><i class="fas fa-tasks"></i> Todo List</a></li>
-                    <li><a href="#feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
-                </ul>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Student Hub. Built with <i class="fas fa-heart" style="color: #ef4444;"></i> by <a
+                        href="https://github.com/Priyanshu-Gupta-9165" target="_blank">Priyanshu Gupta</a></p>
             </div>
-            <div class="footer-links-section">
-                <h4>Features</h4>
-                <ul class="footer-nav">
-                    <li><a href="#chatbot"><i class="fas fa-brain"></i> DeepSeek AI</a></li>
-                    <li><a href="#todo"><i class="fas fa-flag"></i> Priority Tasks</a></li>
-                    <li><a href="#sgpa"><i class="fas fa-chart-bar"></i> Grade Tracking</a></li>
-                    <li><a href="#"><i class="fas fa-moon"></i> Dark Mode</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-divider"></div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Student Hub. Built with <i class="fas fa-heart" style="color: #ef4444;"></i> by <a
-                    href="https://github.com/Priyanshu-Gupta-9165" target="_blank">Priyanshu Gupta</a></p>
-        </div>
-    </footer>
+        </footer>
 
-    <script src="script.js"></script>
-    <script src="chatbot.js?v=7"></script>
-    <script src="sgpa.js"></script>
-    <script src="todo.js"></script>
-    <script src="quotes.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <script src="script.js"></script>
+        <script src="chatbot.js?v=7"></script>
+        <script src="sgpa.js"></script>
+        <script src="todo.js"></script>
+        <script src="quotes.js"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </body>
 
 </html>

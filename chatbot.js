@@ -58,7 +58,7 @@ function createBotMessageDiv() {
     messageDiv.className = 'message bot';
     messageDiv.innerHTML = `
         <div class="avatar">
-            <i class="fas fa-robot"></i>
+            <i class="fas fa-brain"></i>
         </div>
         <div class="message-content">
             <div class="typing-indicator">
@@ -88,7 +88,7 @@ function addUserMessage(message) {
     messageDiv.className = 'message user';
     messageDiv.innerHTML = `
         <div class="avatar">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-user-graduate"></i>
         </div>
         <div class="message-content">
             <p>${message}</p>
@@ -226,6 +226,7 @@ async function handleUserInput() {
 
     addUserMessage(prompt);
     userInput.value = '';
+    userInput.style.height = 'auto'; // Reset textarea height
 
     const botMessageDiv = createBotMessageDiv();
 
@@ -246,6 +247,15 @@ async function handleUserInput() {
 
 // Event Listeners
 sendBtn.addEventListener('click', handleUserInput);
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleUserInput();
+userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); // Prevent default newline
+        handleUserInput();
+    }
+});
+
+// Auto-resize textarea
+userInput.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight < 150 ? this.scrollHeight : 150) + 'px';
 });

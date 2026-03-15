@@ -102,20 +102,20 @@ let currentQuoteIndex = 0;
 // Create a continuous scrolling quotes display
 document.addEventListener('DOMContentLoaded', () => {
     const quoteDisplay = document.getElementById('quoteDisplay');
-    
+
     // Create a string with all quotes separated by a divider
     const allQuotes = quotes.join(' • ');
-    
+
     // Set the content to be double the quotes to ensure continuous scrolling
     quoteDisplay.textContent = allQuotes + ' • ' + allQuotes;
-    
+
     // Set the parent container to be twice as wide for smooth scrolling
     const scrollContainer = quoteDisplay.parentElement;
     scrollContainer.style.display = 'flex';
     scrollContainer.style.width = 'max-content';
-    
+
     // Adjust animation duration based on content length
     const contentLength = allQuotes.length;
-    const duration = Math.max(40, contentLength * 0.2);
+    const duration = Math.max(30, contentLength * 0.15);
     scrollContainer.style.setProperty('--animation-duration', `${duration}s`);
 });
