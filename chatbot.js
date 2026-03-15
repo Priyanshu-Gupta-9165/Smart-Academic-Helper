@@ -116,10 +116,11 @@ async function generateResponse(prompt, messageDiv) {
                         { role: 'system', content: SYSTEM_INSTRUCTION + `\n\nCurrent Date and Time: ${new Date().toLocaleString()}` },
                         { role: 'user', content: prompt }
                     ],
-                    temperature: 0.2, // Gemma works best with lower temperatures
-                    top_p: 0.7,
-                    max_tokens: 1024, // Gemma output limit
-                    stream: true
+                    temperature: 1,
+                    top_p: 0.95,
+                    max_tokens: 8192,
+                    stream: true,
+                    extra_body: { chat_template_kwargs: { thinking: true } }
                 })
             });
 
