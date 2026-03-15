@@ -70,54 +70,38 @@ Student Support Hub is your trusted digital companion, designed by students for 
 ```bash
 git clone https://github.com/Priyanshu-Gupta-9165/Smart-Academic-Helper.git
 cd Smart-Academic-Helper
-python -m http.server
+npm install
+npm start
 ```
 
 ---
 
 ## 🔑 Setting Up AI Features
 
-> **Get Your OpenRouter API Key:**
+> **Get Your NVIDIA API Key:**
 >
-> 1. Visit [OpenRouter.ai](https://openrouter.ai/)
-> 2. Sign up or log in
-> 3. Go to your dashboard → API section
+> 1. Visit [build.nvidia.com](https://build.nvidia.com/)
+> 2. Sign up or log in with your account
+> 3. Search for the `google/gemma-3n-e4b-it` model
 > 4. Generate and copy your API key
 > 5. **Never share your API key publicly!**
-> 6. Open `config.json` and paste your key:
+> 6. Open `config.js` and paste your key for local development:
 >
->    ```json
->    {
->      "api": {
->        "key": "YOUR_API_KEY_HERE",
->        "timeout": 30000,
->        "model": "your-ai-model"
->      },
->      "ui": {
->        "theme": "auto",
->        "animations": true
->      }
->    }
+>    ```javascript
+>    const NVIDIA_API_KEY = 'YOUR_API_KEY_HERE';
 >    ```
-> 7. Save and you’re ready!
+> 7. For production, ensure you add the `NVIDIA_API_KEY` as an Environment Variable within your Vercel project settings.
 
 ---
 
 ## ⚙️ Configuration
 
-Customize via `config.json`:
+Customize the AI model parameter directly in `config.js` (local) or `config.default.js` (deployed):
 
-```json
-{
-  "api": {
-    "timeout": 30000,
-    "model": "your-ai-model"
-  },
-  "ui": {
-    "theme": "auto",
-    "animations": true
-  }
-}
+```javascript
+// Example Configuration
+const NVIDIA_MODEL = 'google/gemma-3n-e4b-it';
+const PROXY_URL = '/api/chat'; // Deployed Edge Function endpoint
 ```
 
 ---
