@@ -1,0 +1,13 @@
+{
+    "name": "smart-academic-helper",
+    "version": "1.0.0",
+    "description": "Student Support Hub",
+    "main": "index.html",
+    "type": "module",
+    "scripts": {
+        "start": "node proxy-server.js"
+    },
+    "dependencies": {
+        "http-proxy": "^1.18.1"
+    }
+}
