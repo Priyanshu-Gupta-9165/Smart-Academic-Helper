@@ -119,8 +119,7 @@ async function generateResponse(prompt, messageDiv) {
                     temperature: 1,
                     top_p: 0.95,
                     max_tokens: 8192,
-                    stream: true,
-                    extra_body: { chat_template_kwargs: { thinking: true } }
+                    stream: true
                 })
             });
 
