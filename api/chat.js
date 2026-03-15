@@ -1,62 +1,64 @@
-const https = require('https');
+export const config = {
+    runtime: 'edge', // This ensures true streaming via Vercel Edge Network
+};
 
-module.exports = (req, res) => {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+export default async function handler(req) {
     if (req.method === 'OPTIONS') {
-        res.status(204).end();
-        return;
+        return new Response(null, {
+            status: 204,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+        });
     }
 
     if (req.method !== 'POST') {
-        res.status(405).json({ error: 'Method not allowed' });
-        return;
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+            status: 405,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 
     const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
-        res.status(500).json({ error: 'NVIDIA_API_KEY not configured' });
-        return;
+        return new Response(JSON.stringify({ error: 'NVIDIA_API_KEY not configured' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
     }
 
-    // Remove apiKey from body if sent from frontend, use env var instead
-    const body = { ...req.body };
-    delete body.apiKey;
+    try {
+        const body = await req.json();
+        delete body.apiKey; // Securely remove local key before forwarding
 
-    const requestBody = JSON.stringify(body);
+        // Enforce streaming mode for fast TTFB (Time To First Byte)
+        body.stream = true;
 
-    const options = {
-        hostname: 'integrate.api.nvidia.com',
-        path: '/v1/chat/completions',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Length': Buffer.byteLength(requestBody)
-        }
-    };
+        const nvidiaRes = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(body),
+        });
 
-    const apiReq = https.request(options, (apiRes) => {
-        // Forward status and headers
-        const headers = {
-            'Content-Type': apiRes.headers['content-type'] || 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        };
-        if (apiRes.headers['transfer-encoding']) {
-            headers['Transfer-Encoding'] = apiRes.headers['transfer-encoding'];
-        }
-        res.writeHead(apiRes.statusCode, headers);
-        apiRes.pipe(res);
-    });
+        // Forward headers and add CORS
+        const responseHeaders = new Headers(nvidiaRes.headers);
+        responseHeaders.set('Access-Control-Allow-Origin', '*');
 
-    apiReq.on('error', (err) => {
-        console.error('Proxy error:', err);
-        res.status(502).json({ error: 'Proxy error: ' + err.message });
-    });
+        // Return the ReadableStream directly - Vercel Edge streams this to the client
+        return new Response(nvidiaRes.body, {
+            status: nvidiaRes.status,
+            headers: responseHeaders,
+        });
 
-    apiReq.write(requestBody);
-    apiReq.end();
-};
+    } catch (err) {
+        return new Response(JSON.stringify({ error: 'Proxy error: ' + err.message }), {
+            status: 502,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
+    }
+}
