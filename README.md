@@ -23,7 +23,7 @@ Student Support Hub is your trusted digital companion, designed by students for 
 
 ## 🚀 Live Demo
 
-👉 **Try it now:** [Smart Academic Helper - Live Demo](https://priyanshu-gupta-9165.github.io/Smart-Academic-Helper/)
+👉 **Try it now:** [Smart Academic Helper - Live Demo](https://smart-academic-helper.vercel.app)
 
 ---
 
