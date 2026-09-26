@@ -30,7 +30,7 @@ function addMessage(message, isUser = false) {
             <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
         </div>
         <div class="message-content">
-            <p>${message}</p>
+            ${message}
         </div>
     `;
     
@@ -39,25 +39,66 @@ function addMessage(message, isUser = false) {
     return messageDiv;
 }
 
-// Stream response via secure backend proxy
+// Show typing indicator (bouncing dots)
+function showTypingIndicator() {
+    return addMessage(`
+        <div class="typing-indicator">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+        </div>
+    `, false);
+}
+
+// Build the fetch request — uses Groq directly if API key is available, otherwise uses proxy
+function buildFetchRequest(prompt) {
+    const messages = [
+        { role: 'system', content: SYSTEM_INSTRUCTION + `\n\nCurrent Date and Time: ${new Date().toLocaleString()}` },
+        { role: 'user', content: prompt }
+    ];
+
+    // If GROQ_API_KEY is set (from config.js), call Groq directly
+    if (typeof GROQ_API_KEY !== 'undefined' && GROQ_API_KEY) {
+        return {
+            url: 'https://api.groq.com/openai/v1/chat/completions',
+            options: {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${GROQ_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: typeof GROQ_MODEL !== 'undefined' ? GROQ_MODEL : 'llama-3.3-70b-versatile',
+                    messages: messages,
+                    temperature: 0.2,
+                    top_p: 0.7,
+                    max_tokens: 1024,
+                    stream: true
+                })
+            }
+        };
+    }
+
+    // Otherwise use the backend proxy (for Vercel deployment)
+    const proxyUrl = typeof PROXY_URL !== 'undefined' ? PROXY_URL : '/api/chat';
+    return {
+        url: proxyUrl,
+        options: {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: messages })
+        }
+    };
+}
+
+// Stream response from API
 async function generateResponse(prompt, messageDiv) {
     const contentEl = messageDiv.querySelector('.message-content');
 
     for (let attempt = 0; attempt < 3; attempt++) {
         try {
-            const response = await fetch(PROXY_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    // REMOVED apiKey and model from here! The backend handles it securely now.
-                    messages: [
-                        { role: 'system', content: SYSTEM_INSTRUCTION + `\n\nCurrent Date and Time: ${new Date().toLocaleString()}` },
-                        { role: 'user', content: prompt }
-                    ]
-                })
-            });
+            const { url, options } = buildFetchRequest(prompt);
+            const response = await fetch(url, options);
 
             if (response.status === 429) {
                 const wait = 5000 * (attempt + 1);
@@ -69,7 +110,7 @@ async function generateResponse(prompt, messageDiv) {
             if (!response.ok) {
                 const errData = await response.text();
                 console.error(`API Error ${response.status}:`, errData);
-                return `Sorry, the AI service returned an error (${response.status}). ${errData}`;
+                return `Sorry, the AI service returned an error (${response.status}).`;
             }
 
             // Remove typing indicator
@@ -104,11 +145,8 @@ async function generateResponse(prompt, messageDiv) {
 
                         if (delta.content) {
                             fullText += delta.content;
-                        }
-
-                        // Update display
-                        if (delta.content) {
-                            contentEl.innerHTML = fullText;
+                            // Live update with simple markdown rendering
+                            contentEl.innerHTML = renderSimpleMarkdown(fullText);
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }
                     } catch (e) {
@@ -118,7 +156,8 @@ async function generateResponse(prompt, messageDiv) {
             }
 
             // Final render
-            contentEl.innerHTML = fullText || 'Sorry, I received an empty response. Please try again.';
+            contentEl.innerHTML = renderSimpleMarkdown(fullText || 'Sorry, I received an empty response. Please try again.');
+            contentEl.classList.add('done'); // Stop blinking cursor
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             return null; // streaming handled directly
@@ -134,17 +173,52 @@ async function generateResponse(prompt, messageDiv) {
     return "The AI is rate-limited right now. Please wait a moment and try again.";
 }
 
+// Simple markdown renderer for chat responses
+function renderSimpleMarkdown(text) {
+    // Use marked.js if available
+    if (typeof marked !== 'undefined') {
+        try {
+            return marked.parse(text);
+        } catch (e) {
+            console.warn('marked.js error:', e);
+        }
+    }
+    
+    // Basic fallback markdown rendering
+    let html = text
+        // Code blocks
+        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="code-block"><code>$2</code></pre>')
+        // Inline code
+        .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+        // Bold
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // Headers
+        .replace(/^### (.+)$/gm, '<h4>$1</h4>')
+        .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+        // Line breaks
+        .replace(/\n/g, '<br>');
+    
+    return html;
+}
+
 // Handle user input
 async function handleUserInput() {
     const prompt = userInput.value.trim();
     if (!prompt) return;
 
+    // Disable input while processing
+    userInput.disabled = true;
+    sendBtn.disabled = true;
+
     // Add user message
     addMessage(prompt, true);
     userInput.value = '';
 
-    // Add bot message placeholder (streaming will fill it)
-    const botMessage = addMessage('<div class="typing-indicator"><span></span><span></span><span></span></div>', false);
+    // Show typing animation
+    const botMessage = showTypingIndicator();
 
     try {
         // Generate response (streams directly into botMessage)
@@ -152,10 +226,17 @@ async function handleUserInput() {
         if (error) {
             const contentEl = botMessage.querySelector('.message-content');
             contentEl.innerHTML = `<p>${error}</p>`;
+            contentEl.classList.add('done');
         }
     } catch (err) {
         const contentEl = botMessage.querySelector('.message-content');
         contentEl.innerHTML = '<p>Oops! Something went wrong. Please try again.</p>';
+        contentEl.classList.add('done');
+    } finally {
+        // Re-enable input
+        userInput.disabled = false;
+        sendBtn.disabled = false;
+        userInput.focus();
     }
 }
 

@@ -1354,3 +1354,77 @@ main {
 .dark-mode .quote-author {
     color: #a0aec0;
 }
+
+/* Message fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Typing Indicator - Bouncing Dots */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+}
+
+.typing-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    animation: typingBounce 1.4s infinite ease-in-out both;
+    opacity: 0.7;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Streaming text cursor effect */
+.message.bot .message-content::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--primary-color);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: cursorBlink 0.8s steps(2) infinite;
+}
+
+.message.bot .message-content.done::after {
+    display: none;
+}
+
+@keyframes cursorBlink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
