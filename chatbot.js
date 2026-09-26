@@ -20,85 +20,26 @@ RULES:
 - Get straight to the answer.
 - Be accurate and to the point like a textbook, not chatty.`;
 
-// Render math expressions using KaTeX
-function renderMath(text) {
-    // Block math: $$...$$
-    text = text.replace(/\$\$([\s\S]+?)\$\$/g, (match, expr) => {
-        try {
-            if (typeof katex !== 'undefined') {
-                return katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false });
-            }
-        } catch (e) { console.warn('KaTeX error:', e); }
-        return `<div class="math-block">${expr.trim()}</div>`;
-    });
-
-    // Inline math: $...$
-    text = text.replace(/\$([^$\n]+?)\$/g, (match, expr) => {
-        try {
-            if (typeof katex !== 'undefined') {
-                return katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false });
-            }
-        } catch (e) { console.warn('KaTeX error:', e); }
-        return `<code class="math-inline">${expr.trim()}</code>`;
-    });
-
-    return text;
-}
-
-// Render markdown to formatted HTML
-function renderMarkdown(text) {
-    if (typeof marked === 'undefined') return text;
-    let processed = renderMath(text);
-    return marked.parse(processed);
-}
-
-// Create a bot message div with avatar (returns the message div)
-function createBotMessageDiv() {
+// Add message to chat
+function addMessage(message, isUser = false) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message bot';
+    messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+    
     messageDiv.innerHTML = `
         <div class="avatar">
-            <i class="fas fa-brain"></i>
-        </div>
-        <div class="message-content">
-            <div class="typing-indicator">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-    `;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    return messageDiv;
-}
-
-// ChatGPT-style typing effect: reveal text word by word (used for error messages)
-async function typeResponse(messageDiv, fullText) {
-    const contentEl = messageDiv.querySelector('.message-content');
-
-    const typingIndicator = contentEl.querySelector('.typing-indicator');
-    if (typingIndicator) typingIndicator.remove();
-
-    contentEl.innerHTML = renderMarkdown(fullText);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Add user message
-function addUserMessage(message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user';
-    messageDiv.innerHTML = `
-        <div class="avatar">
-            <i class="fas fa-user-graduate"></i>
+            <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
         </div>
         <div class="message-content">
             <p>${message}</p>
         </div>
     `;
+    
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    return messageDiv;
 }
 
-// Stream response from NVIDIA DeepSeek API via proxy
+// Stream response via secure backend proxy
 async function generateResponse(prompt, messageDiv) {
     const contentEl = messageDiv.querySelector('.message-content');
 
@@ -110,18 +51,11 @@ async function generateResponse(prompt, messageDiv) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    apiKey: NVIDIA_API_KEY,
-                    model: NVIDIA_MODEL,
+                    // REMOVED apiKey and model from here! The backend handles it securely now.
                     messages: [
                         { role: 'system', content: SYSTEM_INSTRUCTION + `\n\nCurrent Date and Time: ${new Date().toLocaleString()}` },
                         { role: 'user', content: prompt }
-                    ],
-                    temperature: 0.2,
-                    top_p: 0.7,
-                    frequency_penalty: 0,
-                    presence_penalty: 0,
-                    max_tokens: 512,
-                    stream: true
+                    ]
                 })
             });
 
@@ -135,7 +69,7 @@ async function generateResponse(prompt, messageDiv) {
             if (!response.ok) {
                 const errData = await response.text();
                 console.error(`API Error ${response.status}:`, errData);
-                return `Sorry, the AI service returned an error (${response.status}). Please try again later.`;
+                return `Sorry, the AI service returned an error (${response.status}). ${errData}`;
             }
 
             // Remove typing indicator
@@ -146,7 +80,6 @@ async function generateResponse(prompt, messageDiv) {
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullText = '';
-            let reasoningText = '';
             let buffer = '';
 
             while (true) {
@@ -169,24 +102,13 @@ async function generateResponse(prompt, messageDiv) {
                         const delta = parsed.choices?.[0]?.delta;
                         if (!delta) continue;
 
-                        // Handle reasoning content (thinking tokens)
-                        if (delta.reasoning_content) {
-                            reasoningText += delta.reasoning_content;
-                        }
-
-                        // Handle regular content
                         if (delta.content) {
                             fullText += delta.content;
                         }
 
                         // Update display
-                        if (delta.content || delta.reasoning_content) {
-                            let displayHTML = '';
-                            if (reasoningText) {
-                                displayHTML += `<details class="thinking-section"><summary>💭 Thinking...</summary><div class="thinking-content">${renderMarkdown(reasoningText)}</div></details>`;
-                            }
-                            displayHTML += renderMarkdown(fullText);
-                            contentEl.innerHTML = displayHTML;
+                        if (delta.content) {
+                            contentEl.innerHTML = fullText;
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }
                     } catch (e) {
@@ -196,12 +118,7 @@ async function generateResponse(prompt, messageDiv) {
             }
 
             // Final render
-            let finalHTML = '';
-            if (reasoningText) {
-                finalHTML += `<details class="thinking-section"><summary>💭 Thinking...</summary><div class="thinking-content">${renderMarkdown(reasoningText)}</div></details>`;
-            }
-            finalHTML += renderMarkdown(fullText || 'Sorry, I received an empty response. Please try again.');
-            contentEl.innerHTML = finalHTML;
+            contentEl.innerHTML = fullText || 'Sorry, I received an empty response. Please try again.';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             return null; // streaming handled directly
@@ -209,7 +126,7 @@ async function generateResponse(prompt, messageDiv) {
         } catch (error) {
             console.error(`Network error (attempt ${attempt + 1}):`, error);
             if (attempt === 2) {
-                return "Sorry, I couldn't connect to the AI service. Make sure the proxy server is running (node proxy-server.js) and try again.";
+                return "Sorry, I couldn't connect to the AI service. Check your internet connection and try again.";
             }
             await new Promise(r => setTimeout(r, 2000));
         }
@@ -222,41 +139,28 @@ async function handleUserInput() {
     const prompt = userInput.value.trim();
     if (!prompt) return;
 
-    sendBtn.disabled = true;
-    userInput.disabled = true;
-
-    addUserMessage(prompt);
+    // Add user message
+    addMessage(prompt, true);
     userInput.value = '';
-    userInput.style.height = 'auto'; // Reset textarea height
 
-    const botMessageDiv = createBotMessageDiv();
+    // Add bot message placeholder (streaming will fill it)
+    const botMessage = addMessage('<div class="typing-indicator"><span></span><span></span><span></span></div>', false);
 
     try {
-        const fallbackText = await generateResponse(prompt, botMessageDiv);
-        if (fallbackText) {
-            await typeResponse(botMessageDiv, fallbackText);
+        // Generate response (streams directly into botMessage)
+        const error = await generateResponse(prompt, botMessage);
+        if (error) {
+            const contentEl = botMessage.querySelector('.message-content');
+            contentEl.innerHTML = `<p>${error}</p>`;
         }
-    } catch (error) {
-        const contentEl = botMessageDiv.querySelector('.message-content');
+    } catch (err) {
+        const contentEl = botMessage.querySelector('.message-content');
         contentEl.innerHTML = '<p>Oops! Something went wrong. Please try again.</p>';
-    } finally {
-        sendBtn.disabled = false;
-        userInput.disabled = false;
-        userInput.focus();
     }
 }
 
 // Event Listeners
 sendBtn.addEventListener('click', handleUserInput);
-userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault(); // Prevent default newline
-        handleUserInput();
-    }
-});
-
-// Auto-resize textarea
-userInput.addEventListener('input', function () {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight < 150 ? this.scrollHeight : 150) + 'px';
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUserInput();
 });

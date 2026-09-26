@@ -1,67 +1,44 @@
-const http = require('http');
-const https = require('https');
-const url = require('url');
+// proxy-server.cjs
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-const PORT = 3001;
-const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
+app.use(cors());
+app.use(express.json());
 
-const server = http.createServer((req, res) => {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+// PASTE YOUR KEY HERE FOR LOCAL TESTING ONLY
+const LOCAL_GROQ_KEY = 'gsk_PASTE_YOUR_GROQ_KEY_HERE'; 
 
-    if (req.method === 'OPTIONS') {
-        res.writeHead(204);
-        res.end();
-        return;
-    }
+app.post('/api/chat', async (req, res) => {
+    const { messages } = req.body;
 
-    if (req.method === 'POST' && req.url === '/api/chat') {
-        let body = '';
-        req.on('data', chunk => { body += chunk; });
-        req.on('end', () => {
-            const parsed = JSON.parse(body);
-            const apiKey = parsed.apiKey;
-            delete parsed.apiKey;
-
-            const requestBody = JSON.stringify(parsed);
-
-            const options = {
-                hostname: 'integrate.api.nvidia.com',
-                path: '/v1/chat/completions',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Length': Buffer.byteLength(requestBody)
-                }
-            };
-
-            const apiReq = https.request(options, (apiRes) => {
-                res.writeHead(apiRes.statusCode, {
-                    ...apiRes.headers,
-                    'Access-Control-Allow-Origin': '*'
-                });
-                apiRes.pipe(res);
-            });
-
-            apiReq.on('error', (err) => {
-                console.error('Proxy error:', err);
-                res.writeHead(502);
-                res.end(JSON.stringify({ error: 'Proxy error: ' + err.message }));
-            });
-
-            apiReq.write(requestBody);
-            apiReq.end();
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${LOCAL_GROQ_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: messages,
+                temperature: 0.2,
+                max_tokens: 1024,
+                stream: true,
+            }),
         });
-    } else {
-        res.writeHead(404);
-        res.end('Not found');
+
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+
+        // Pipe the streaming response from Groq back to your local browser
+        response.body.pipe(res);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
-server.listen(PORT, () => {
-    console.log(`✅ NVIDIA API Proxy running at http://localhost:${PORT}`);
-    console.log(`   Forwarding requests to ${NVIDIA_API_URL}`);
-});
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Proxy server running on http://localhost:${PORT}`));

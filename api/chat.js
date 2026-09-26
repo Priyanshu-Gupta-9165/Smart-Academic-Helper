@@ -1,65 +1,52 @@
-export const config = {
-    runtime: 'edge', // This ensures true streaming via Vercel Edge Network
-};
+// api/chat.js
+export const runtime = 'edge'; // Uses Vercel's Edge Runtime for ultra-fast streaming
 
 export default async function handler(req) {
-    if (req.method === 'OPTIONS') {
-        return new Response(null, {
-            status: 204,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-        });
-    }
-
+    // Only allow POST requests
     if (req.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-            status: 405,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }
-
-    const apiKey = process.env.NVIDIA_API_KEY;
-    if (!apiKey) {
-        return new Response(JSON.stringify({ error: 'NVIDIA_API_KEY not configured' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        });
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
     }
 
     try {
-        const body = await req.json();
-        delete body.apiKey; // Securely remove local key before forwarding
+        const { messages } = await req.json();
+        
+        // Securely get the API key from Vercel Environment Variables
+        const groqApiKey = process.env.GROQ_API_KEY; 
+        if (!groqApiKey) {
+            return new Response(JSON.stringify({ error: 'Server Error: GROQ_API_KEY is missing in Vercel settings.' }), { status: 500 });
+        }
 
-        // Enforce streaming mode for fast TTFB (Time To First Byte)
-        body.stream = true;
-
-        const nvidiaRes = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        // Call Groq's API instead of NVIDIA
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${groqApiKey}`,
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-                'Accept': 'text/event-stream'
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile', // Groq's smartest and fastest free model
+                messages: messages,
+                temperature: 0.2,
+                max_tokens: 1024,
+                stream: true, // REQUIRED for your frontend typing effect
+            }),
         });
 
-        // Forward headers and add CORS
-        const responseHeaders = new Headers(nvidiaRes.headers);
-        responseHeaders.set('Access-Control-Allow-Origin', '*');
+        if (!response.ok) {
+            const errText = await response.text();
+            return new Response(errText, { status: response.status });
+        }
 
-        // Return the ReadableStream directly - Vercel Edge streams this to the client
-        return new Response(nvidiaRes.body, {
-            status: nvidiaRes.status,
-            headers: responseHeaders,
+        // Stream the response directly back to the frontend (Standard Edge Streaming)
+        return new Response(response.body, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+            },
         });
 
-    } catch (err) {
-        return new Response(JSON.stringify({ error: 'Proxy error: ' + err.message }), {
-            status: 502,
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
 }
