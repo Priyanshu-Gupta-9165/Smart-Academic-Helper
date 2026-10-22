@@ -1,6 +1,6 @@
 // Default config for deployed site
 if (typeof PROXY_URL === 'undefined') var PROXY_URL = '/api/chat';
-if (typeof GROQ_MODEL === 'undefined') var GROQ_MODEL = 'llama-3.3-70b-versatile';
+if (typeof GROQ_MODEL === 'undefined') var GROQ_MODEL = 'openai/gpt-oss-120b';
 
 // Key is split to bypass push protection — assembled at runtime
 if (typeof GROQ_API_KEY === 'undefined') {

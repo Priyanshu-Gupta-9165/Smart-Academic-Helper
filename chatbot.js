@@ -68,7 +68,7 @@ function buildFetchRequest(prompt) {
                     'Authorization': `Bearer ${GROQ_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: typeof GROQ_MODEL !== 'undefined' ? GROQ_MODEL : 'llama-3.3-70b-versatile',
+                    model: typeof GROQ_MODEL !== 'undefined' ? GROQ_MODEL : 'openai/gpt-oss-120b',
                     messages: messages,
                     temperature: 0.2,
                     top_p: 0.7,
